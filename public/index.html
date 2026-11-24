@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Super Mario Quiz - Player</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+</head>
+
+<body class="player-body">
+  <!-- Top Retro HUD -->
+  <header class="mario-top-hud">
+    <div class="hud-left">
+      <span class="hud-coin-icon"></span>
+      <span id="player-score-hud" class="hud-mario-val">0000</span>
+    </div>
+    <div class="hud-center">
+      <span id="player-name-hud" style="font-family:var(--font-pixel); font-size:12px; color:#ffd700;">JOINING...</span>
+    </div>
+    <div class="hud-right">
+      <button id="btn-player-mute" class="hud-sound-btn" title="Toggle Sound">
+        <span id="player-mute-icon">🔊</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Player Main Layout -->
+  <main class="player-view">
+    <!-- Screen 1: JOIN FORM -->
+    <section id="player-screen-join" class="player-join-card">
+      <div style="font-size:44px; margin-bottom:12px;">🍄</div>
+      <h1 class="lobby-mario-title" style="font-size:22px;">SUPER MARIO QUIZ</h1>
+      <p style="font-family:var(--font-pixel); font-size:11px; color:#ddd; margin:12px 0;">ENTER TEAM NAME TO JOIN:</p>
+
+      <input type="text" id="player-name-input" class="mario-pixel-input" placeholder="Team Name (2-20 chars)"
+        maxlength="20" autofocus autocomplete="off">
+      <div id="player-join-error"
+        style="color:#ff4444; font-family:var(--font-pixel); font-size:11px; margin-bottom:12px; display:none;"></div>
+
+      <button id="btn-player-join" class="mario-yellow-btn" style="width:100%; justify-content:center; font-size:16px;">
+        JOIN GAME ⭐
+      </button>
+    </section>
+
+    <!-- Screen 2: LOBBY WAITING -->
+    <section id="player-screen-waiting" class="player-join-card" style="display:none;">
+      <div class="hud-coin-icon" style="width:32px; height:44px; margin:0 auto 16px;"></div>
+      <h2 class="lobby-mario-title" style="font-size:22px; color:#ffd700;">YOU'RE IN!</h2>
+      <p style="font-family:var(--font-pixel); font-size:13px; color:#fff; margin:14px 0;">
+        TEAM: <span id="player-waiting-team-name" style="color:#ffd700;">---</span>
+      </p>
+      <div style="background:#111; border:2px dashed #444; border-radius:8px; padding:18px; margin-top:20px;">
+        <p style="font-family:var(--font-pixel); font-size:12px; line-height:1.6; color:#ddd;">
+          Waiting for the host to start the quiz...
+        </p>
+        <p style="font-size:13px; font-weight:700; color:#888; margin-top:10px;">
+          Answer quickly for speed bonus coins!
+        </p>
+      </div>
+    </section>
+
+    <!-- Screen 2.5: GET READY SCREEN (Mobile - No Video) -->
+    <section id="player-screen-get-ready" class="player-join-card" style="display:none;">
+      <div style="font-size:44px; margin-bottom:12px;">🍄</div>
+      <h2 class="lobby-mario-title" style="font-size:22px; color:#ffd700;">GET READY!</h2>
+      <p id="player-ready-stage" style="font-family:var(--font-pixel); font-size:13px; color:#fff; margin:14px 0;">
+        QUESTION 1 / 8 COMING UP!
+      </p>
+      <div style="background:#111; border:2px dashed #ffd700; border-radius:8px; padding:18px; margin-top:16px;">
+        <p style="font-family:var(--font-pixel); font-size:12px; line-height:1.6; color:#ddd;">
+          Look up at the projector screen!
+        </p>
+        <p style="font-size:13px; font-weight:700; color:#888; margin-top:10px;">
+          Fast answers earn speed bonus coins!
+        </p>
+      </div>
+    </section>
+
+    <!-- Screen 3: QUESTION (Active Play) -->
+    <section id="player-screen-question" class="player-question-container"
+      style="display:none; flex-direction:column; gap:14px; flex:1;">
+      <div
+        style="display:flex; justify-content:space-between; align-items:center; background:#000; border:3px solid #fff; border-radius:8px; padding:10px 16px; font-family:var(--font-pixel); font-size:12px;">
+        <span id="player-q-num">QUESTION 1/8</span>
+        <span id="player-timer-display" style="color:#ffd700;">⏱ 60s</span>
+      </div>
+
+      <div class="mario-question-card" style="min-height:90px; padding:18px 20px;">
+        <div id="player-q-text" style="font-family:var(--font-pixel); font-size:14px; line-height:1.45; color:#fff;">
+          Loading question...</div>
+      </div>
+
+      <!-- 4 Golden-Yellow Rounded Touch Buttons -->
+      <div class="player-buttons-grid" id="player-buttons-container">
+        <button class="player-mario-btn" data-index="0" id="btn-ans-0">
+          <span class="p-prefix">A .</span>
+          <span class="p-text" id="ans-text-0">Option A</span>
+        </button>
+
+        <button class="player-mario-btn" data-index="1" id="btn-ans-1">
+          <span class="p-prefix">B .</span>
+          <span class="p-text" id="ans-text-1">Option B</span>
+        </button>
+
+        <button class="player-mario-btn" data-index="2" id="btn-ans-2">
+          <span class="p-prefix">C .</span>
+          <span class="p-text" id="ans-text-2">Option C</span>
+        </button>
+
+        <button class="player-mario-btn" data-index="3" id="btn-ans-3">
+          <span class="p-prefix">D .</span>
+          <span class="p-text" id="ans-text-3">Option D</span>
+        </button>
+      </div>
+
+      <!-- Locked State Overlay -->
+      <div id="player-locked-box" class="player-join-card" style="display:none; margin:auto 0;">
+        <div class="hud-coin-icon" style="width:36px; height:48px; margin:0 auto 16px;"></div>
+        <h3 style="font-family:var(--font-pixel); font-size:16px; color:#ffd700; margin-bottom:10px;">
+          ANSWER LOCKED IN!
+        </h3>
+        <p style="font-size:14px; font-weight:700; color:#ddd;">Waiting for the round to finish...</p>
+      </div>
+    </section>
+
+    <!-- Screen 4: REVEAL FEEDBACK -->
+    <section id="player-screen-reveal" class="player-join-card" style="display:none;">
+      <div id="reveal-icon" style="font-size:52px; margin-bottom:12px;">🎉</div>
+      <h2 id="reveal-title" style="font-family:var(--font-pixel); font-size:22px; margin-bottom:10px;">CORRECT!</h2>
+      <div id="reveal-points" style="font-family:var(--font-pixel); font-size:18px; color:#ffd700; margin-bottom:14px;">
+        +780 PTS</div>
+      <div id="reveal-rank" style="font-weight:700; font-size:16px; color:#fff;">You are currently in #1 place</div>
+      <p style="font-size:12px; color:#aaa; margin-top:16px;">Look up at the projector screen for the explanation!</p>
+    </section>
+
+    <!-- Screen 5: LEADERBOARD WAIT -->
+    <section id="player-screen-leaderboard" class="player-join-card" style="display:none;">
+      <div style="font-size:44px; margin-bottom:12px;">🏆</div>
+      <h2 class="lobby-mario-title" style="font-size:20px; color:#ffd700;">ROUND COMPLETE</h2>
+      <div style="background:#111; border:3px solid #333; border-radius:8px; padding:18px; margin:16px 0;">
+        <div style="font-family:var(--font-pixel); font-size:12px; color:#888; margin-bottom:6px;">YOUR CURRENT RANK
+        </div>
+        <div id="player-lb-rank"
+          style="font-family:var(--font-pixel); font-size:32px; color:#ffd700; margin-bottom:8px;">#1</div>
+        <div id="player-lb-score" style="font-family:var(--font-pixel); font-size:16px; color:#fff;">Score: 0 pts</div>
+      </div>
+      <p style="font-weight:700; color:#aaa; font-size:13px;">Next question starting shortly...</p>
+    </section>
+
+    <!-- Screen 6: FINAL PODIUM -->
+    <section id="player-screen-final" class="player-join-card" style="display:none;">
+      <div id="player-final-icon" style="font-size:56px; margin-bottom:12px;">👑</div>
+      <h1 class="lobby-mario-title" style="font-size:22px; color:#ffd700;">STAGE CLEAR!</h1>
+      <div style="background:#14141e; border:3px solid #ffd700; border-radius:8px; padding:20px; margin:16px 0;">
+        <div id="player-final-placement"
+          style="font-family:var(--font-pixel); font-size:22px; color:#ffd700; margin-bottom:8px;">1ST PLACE</div>
+        <div id="player-final-score" style="font-family:var(--font-pixel); font-size:16px; color:#fff;">Final Score: 0
+          pts</div>
+      </div>
+      <p style="font-weight:700; color:#ddd; font-size:14px;">Thank you for playing!</p>
+    </section>
+
+    <!-- Screen 7: KICKED -->
+    <section id="player-screen-kicked" class="player-join-card" style="display:none;">
+      <div style="font-size:48px; margin-bottom:12px;">🚫</div>
+      <h2 class="lobby-mario-title" style="font-size:20px; color:#ff4444;">DISCONNECTED</h2>
+      <p style="font-weight:700; color:#ddd; margin:16px 0;">You were removed from the game by the host.</p>
+      <button id="btn-rejoin-fresh" class="mario-yellow-btn" style="width:100%; justify-content:center;">JOIN AS NEW
+        TEAM</button>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/audio.js"></script>
+  <script src="/js/player.js"></script>
+</body>
+
+</html>

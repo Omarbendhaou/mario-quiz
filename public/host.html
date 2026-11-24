@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Mario Quiz - Projector Host</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍄</text></svg>">
+</head>
+<body class="host-body">
+  <!-- Top Retro Mario HUD -->
+  <header class="mario-top-hud">
+    <div class="hud-left">
+      <span class="hud-mario-label">MARIO</span>
+      <span class="hud-mario-x">✕</span>
+      <span id="hud-mario-lives" class="hud-mario-val">5</span>
+    </div>
+
+    <div class="hud-center">
+      <div class="hud-time-container">
+        <span class="hud-time-label">TIME</span>
+        <span id="hud-timer-num" class="hud-time-val">60</span>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div class="hud-coins-wrapper">
+        <span class="hud-coin-icon"></span>
+        <span class="hud-mario-x">✕</span>
+        <span id="hud-coins-count" class="hud-mario-val">00</span>
+      </div>
+      <div class="hud-question-counter">
+        <span id="hud-q-number" class="hud-mario-val">1</span>
+      </div>
+      <button id="btn-mute" class="hud-sound-btn" title="Toggle Sound">
+        <span id="mute-icon">🔊</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <main class="host-main-container">
+    <!-- PIN Protection Modal -->
+    <div id="pin-modal" class="mario-wood-box" style="max-width:440px; margin:auto; text-align:center; display:none;">
+      <h2 style="font-family:var(--font-pixel); font-size:16px; color:#ffd700; margin-bottom:14px;">🔐 HOST AUTHENTICATION</h2>
+      <p style="font-family:var(--font-pixel); font-size:11px; line-height:1.6; margin-bottom:16px; color:#fff;">
+        ENTER HOST PIN TO UNLOCK CONTROLS:
+      </p>
+      <input type="password" id="input-pin" class="mario-pixel-input" placeholder="Enter PIN..." maxlength="10" autofocus>
+      <div id="pin-error" style="color:#ff4444; font-family:var(--font-pixel); font-size:11px; margin-bottom:12px; display:none;"></div>
+      <button id="btn-submit-pin" class="mario-yellow-btn" style="width:100%; justify-content:center;">UNLOCK HOST</button>
+    </div>
+
+    <!-- Screen 1: LOBBY -->
+    <section id="screen-lobby" class="lobby-mario-layout" style="display:none;">
+      <div class="mario-wood-box lobby-content-frame">
+        <div class="lobby-header-banner">
+          <h1 class="lobby-mario-title">SUPER MARIO QUIZ</h1>
+          <div class="lobby-chapter-badge">CHAPTER 8: CLOSING PROJECTS</div>
+        </div>
+
+        <div class="lobby-main-split">
+          <!-- QR Code & Join Info -->
+          <div class="lobby-qr-block">
+            <div class="qr-scan-label">SCAN TO JOIN</div>
+            <img id="lobby-qr-code" class="lobby-qr-image" alt="QR Code">
+            <div id="lobby-url-display" class="lobby-url-pill">http://...</div>
+            <div class="lobby-instruction">Open link on your phone or laptop</div>
+          </div>
+
+          <!-- Connected Teams List -->
+          <div class="lobby-teams-block">
+            <div class="lobby-teams-header">
+              <span>PLAYING TEAMS</span>
+              <span class="teams-count-badge"><span id="lobby-team-counter">0</span> JOINED</span>
+            </div>
+
+            <div id="lobby-teams-list" class="teams-chips-grid">
+              <!-- Team chips appear here -->
+            </div>
+
+            <div class="lobby-footer-actions">
+              <label class="auto-advance-setting">
+                <input type="checkbox" id="check-auto-advance" checked>
+                <span>Advance early when all teams answered</span>
+              </label>
+
+              <button id="btn-start-quiz" class="mario-yellow-btn start-quiz-btn" disabled>
+                START QUIZ 🏁
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 1.5: YOSHI'S HOUSE STORY INTRO (From PPTX) -->
+    <section id="screen-story-intro" class="story-intro-layout" style="display:none;">
+      <div class="story-video-card">
+        <video id="intro-video" class="story-media-player" src="/assets/yoshi_house_anim.mp4" poster="/assets/yoshi_house.png" autoplay muted playsinline loop></video>
+        <div class="story-dialog-bubble">
+          <div id="story-header-title" style="font-family:var(--font-pixel); font-size:14px; color:#ffd700; margin-bottom:8px; text-shadow:2px 2px #000;">
+            STAGE 1 / 8 • YOSHI'S HOUSE
+          </div>
+          <p class="story-text-content" id="story-message-text">
+            Answer questions correctly to get coins and save Princess Peach from Bowser!
+          </p>
+          <div class="story-actions-bar" style="display:flex; justify-content:center; margin-top:14px;">
+            <button id="btn-skip-intro" class="mario-yellow-btn" style="font-size:15px; padding:12px 36px; box-shadow: 0 6px 0 #000; cursor:pointer;">
+              START QUESTION 1 ⏩
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 1.8: OVERWORLD MAP TRANSITION (From PPTX) -->
+    <section id="screen-map-transition" class="map-transition-layout" style="display:none;">
+      <div class="map-video-card">
+        <video id="map-video" class="map-media-player" src="/assets/overworld_map_anim.mp4" poster="/assets/overworld_map.png" autoplay muted playsinline loop></video>
+        <div class="map-stage-banner">
+          <div id="map-world-title" class="map-title-text">WORLD 8-2</div>
+          <div id="map-stage-name" class="map-subtitle-text">YOSHI'S ISLAND 2</div>
+          <div class="map-action-row">
+            <span class="map-loading-indicator">STAGE STARTING...</span>
+            <button id="btn-skip-map" class="mario-yellow-btn" style="font-size:12px; padding:8px 16px;">SKIP ⏩</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2: QUESTION & REVEAL -->
+    <section id="screen-question" class="question-stage-layout" style="display:none;">
+      <!-- Floating Stage Controls Bar -->
+      <div class="stage-controls-strip">
+        <div class="live-answer-counter">
+          ANSWERED: <span id="host-answered-count" style="color:#ffd700;">0</span> / <span id="host-total-teams">0</span>
+        </div>
+        <div class="stage-btns-group">
+          <button id="btn-pause-resume" class="stage-control-btn">PAUSE ⏸</button>
+          <button id="btn-skip" class="stage-control-btn">SKIP ⏩</button>
+          <button id="btn-end-quiz" class="stage-control-btn btn-danger">END ✖</button>
+        </div>
+      </div>
+
+      <!-- Question Box (Exact match to slide black box) -->
+      <div class="mario-question-card">
+        <div id="host-q-header-title" class="mario-q-header">Question 1:</div>
+        <div id="host-q-text" class="mario-q-body">Loading question...</div>
+      </div>
+
+      <!-- 4 Golden-Yellow Rounded Answer Buttons (Exact match to slides) -->
+      <div class="mario-options-grid" id="host-options-grid">
+        <div class="mario-answer-btn" id="host-opt-0">
+          <div class="opt-prefix">A .</div>
+          <div class="opt-text" id="host-opt-text-0">Option A</div>
+          <div class="opt-stats-badge" id="host-stat-votes-0" style="display:none;">0 votes</div>
+        </div>
+
+        <div class="mario-answer-btn" id="host-opt-1">
+          <div class="opt-prefix">B .</div>
+          <div class="opt-text" id="host-opt-text-1">Option B</div>
+          <div class="opt-stats-badge" id="host-stat-votes-1" style="display:none;">0 votes</div>
+        </div>
+
+        <div class="mario-answer-btn" id="host-opt-2">
+          <div class="opt-prefix">C .</div>
+          <div class="opt-text" id="host-opt-text-2">Option C</div>
+          <div class="opt-stats-badge" id="host-stat-votes-2" style="display:none;">0 votes</div>
+        </div>
+
+        <div class="mario-answer-btn" id="host-opt-3">
+          <div class="opt-prefix">D .</div>
+          <div class="opt-text" id="host-opt-text-3">Option D</div>
+          <div class="opt-stats-badge" id="host-stat-votes-3" style="display:none;">0 votes</div>
+        </div>
+      </div>
+
+      <!-- Explanation Card (Revealed on Answer Reveal) -->
+      <div id="host-explanation-card" class="mario-explanation-box" style="display:none;">
+        <span class="exp-title">EXPLANATION:</span>
+        <span id="host-explanation-text" class="exp-body">...</span>
+      </div>
+
+      <!-- Reveal Next Action Button -->
+      <div id="host-reveal-controls" class="stage-reveal-footer" style="display:none;">
+        <button id="btn-reveal-next" class="mario-yellow-btn" style="font-size:16px; padding:16px 36px;">
+          NEXT: LEADERBOARD 🏆
+        </button>
+      </div>
+
+      <!-- Animated Mario Sprite on Stage near grass / pipe -->
+      <div class="mario-stage-character" id="stage-mario-character">
+        <img src="/assets/mario_stage_sprite.gif" alt="Mario on Stage" class="mario-stage-sprite-img">
+      </div>
+    </section>
+
+    <!-- Screen 3: LEADERBOARD -->
+    <section id="screen-leaderboard" class="mario-leaderboard-screen" style="display:none;">
+      <div class="mario-wood-box leaderboard-box">
+        <h2 class="leaderboard-heading">TOP 5 RANKING</h2>
+        <div id="host-leaderboard-list" class="leaderboard-items">
+          <!-- Rows dynamically inserted -->
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+          <button id="btn-leaderboard-next" class="mario-yellow-btn" style="font-size:16px; padding:16px 40px;">
+            NEXT QUESTION ⏩
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 4: FINAL PODIUM -->
+    <section id="screen-podium" class="mario-podium-screen" style="display:none;">
+      <!-- Pixel Fireworks Left & Right (From Slide 11) -->
+      <img src="/assets/pixel_fireworks.gif" class="podium-sky-firework firework-left" alt="Fireworks Left">
+      <img src="/assets/pixel_fireworks.gif" class="podium-sky-firework firework-right" alt="Fireworks Right">
+
+      <!-- Defeated Bowser Spinning Away (From Slide 11) -->
+      <img src="/assets/bowser_defeated.gif" class="podium-bowser-defeated" alt="Bowser Defeated">
+
+      <div class="victory-banner">
+        <!-- Princess Peach & Mario Celebrating atop Castle Wall (From Slide 11) -->
+        <div class="victory-characters-wrapper">
+          <img src="/assets/mario_peach_celebrate.gif" class="mario-peach-celebrate-img" alt="Mario & Princess Peach">
+          <img src="/assets/castle_rampart.png" class="castle-rampart-ledge" alt="Castle Rampart">
+        </div>
+
+        <div class="victory-peach-salute">
+          <span style="font-size:26px;">👑</span>
+          <h1 class="victory-text">"Thank you to our hero, Mario for restoring peace to our kingdom!"</h1>
+          <span style="font-size:26px;">⭐</span>
+        </div>
+        <div class="victory-subtext">CHAPTER 8: CLOSING PROJECTS — TOP TEAMS</div>
+      </div>
+
+      <!-- 3-Pillar Podium Stage -->
+      <div class="podium-stage-wrapper">
+        <!-- 2nd Place -->
+        <div id="pillar-2" class="podium-pillar pillar-2">
+          <div class="podium-badge">🥈 2ND</div>
+          <div class="podium-team-tag">
+            <div id="podium-name-2" class="p-name">---</div>
+            <div id="podium-score-2" class="p-score">0 pts</div>
+          </div>
+          <div class="podium-stone-block">2</div>
+        </div>
+
+        <!-- 1st Place (Tallest Center) -->
+        <div id="pillar-1" class="podium-pillar pillar-1">
+          <div class="podium-crown">👑 1ST 👑</div>
+          <div class="podium-team-tag tag-champion">
+            <div id="podium-name-1" class="p-name champ-name">---</div>
+            <div id="podium-score-1" class="p-score">0 pts</div>
+          </div>
+          <div class="podium-stone-block block-gold">1</div>
+        </div>
+
+        <!-- 3rd Place -->
+        <div id="pillar-3" class="podium-pillar pillar-3">
+          <div class="podium-badge">🥉 3RD</div>
+          <div class="podium-team-tag">
+            <div id="podium-name-3" class="p-name">---</div>
+            <div id="podium-score-3" class="p-score">0 pts</div>
+          </div>
+          <div class="podium-stone-block">3</div>
+        </div>
+      </div>
+
+      <!-- Podium Action Buttons -->
+      <div class="podium-controls-wrapper" style="text-align:center; margin-top:24px; position:relative; z-index:10;">
+        <button id="btn-reveal-podium" class="mario-yellow-btn pulse-glow" style="font-size:16px; padding:16px 36px; cursor:pointer;">
+          🏆 REVEAL TOP 3 PODIUM 🏆
+        </button>
+        <button id="btn-reset-quiz" class="mario-yellow-btn" style="display:none; font-size:14px; padding:14px 30px;">
+          🔄 PLAY AGAIN / RETURN TO LOBBY
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/audio.js"></script>
+  <script src="/js/confetti.js"></script>
+  <script src="/js/host.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+[
+  {
+    "question": "In the lessons-learned report, which of the seven questions is described as \"the most important one\"?",
+    "options": [
+      "Did we meet our scope, time, and cost goals?",
+      "What is one thing that went right?",
+      "What will we do differently next time?",
+      "What success criteria did we set at the beginning?"
+    ],
+    "correctIndex": 2,
+    "explanation": "The seventh question, \"What will we do differently next time?\", is the most important because it turns the review into improvements for future projects."
+  },
+  {
+    "question": "In the Radès–La Goulette bridge case study (Tunis), which result best describes the project?",
+    "options": [
+      "It finished on time but cost more than double the plan",
+      "It took about 216 percent of the planned time, with cost close to plan",
+      "It was cancelled before opening because the ferry stayed cheaper",
+      "It met its schedule and budget but carried fewer vehicles than planned"
+    ],
+    "correctIndex": 1,
+    "explanation": "The schedule grew from 56 to 121 months (216 percent of the plan) while cost stayed at about 102 percent of plan. The bridge still carried more vehicles per day than planned (29,500 vs 24,400)."
+  },
+  {
+    "question": "According to the presentation, closing procurements involves which three actions?",
+    "options": [
+      "Plan the work, select the sellers, and administer the contract",
+      "Audit the seller, litigate the claims, and renegotiate the terms",
+      "Advertise the work, invite bids, and award to the lowest bidder",
+      "Complete deliverables, settle open items, and archive records"
+    ],
+    "correctIndex": 3,
+    "explanation": "Closing procurements means completing deliverables (delivered, verified, accepted), settling open items and final payment, and archiving contract records for the future."
+  },
+  {
+    "question": "What was the key takeaway of the Energy Conservation Demonstration Project in Tunisia, which closed in June 1994 instead of June 1990?",
+    "options": [
+      "A project must be evaluated, controlled, and transitioned before closing",
+      "Projects should be closed as soon as the loan money has been fully spent",
+      "Loan-funded projects do not need a transition plan once the work is done",
+      "Major scope changes are best approved just before the planned closing date"
+    ],
+    "correctIndex": 0,
+    "explanation": "Major scope changes were approved only weeks before closure without formal restructuring, and the government inherited maintenance costs. The takeaway: evaluate, control, and transition a project before closing it."
+  },
+  {
+    "question": "In the negotiated-settlements ladder, which method is the last resort because it involves court action?",
+    "options": [
+      "Mediation",
+      "Negotiation",
+      "Litigation",
+      "Arbitration"
+    ],
+    "correctIndex": 2,
+    "explanation": "The ladder runs from negotiation (preferred), to mediation, to arbitration, to litigation (court action, last resort). Higher steps mean more cost, more time, and more conflict."
+  },
+  {
+    "question": "Which was one of the lessons from the ONAS treated wastewater project, which took 96 months instead of 60?",
+    "options": [
+      "Bundle different activities into one large tender to save time",
+      "Run a market survey before setting cost estimates",
+      "Set low qualification criteria so more bidders can apply",
+      "Skip audit reports so that closing can be done faster"
+    ],
+    "correctIndex": 1,
+    "explanation": "The lessons were: do not bundle unlike activities in one tender, run a market survey before setting cost estimates, and set qualification criteria that select capable bidders."
+  },
+  {
+    "question": "How were the equipment disputes settled in the Phosphate Sector Rehabilitation project (CPG and GCT, Gafsa)?",
+    "options": [
+      "By direct negotiation between the buyer and the suppliers",
+      "By binding arbitration run by a neutral outside arbitrator",
+      "By court action brought against each of the suppliers",
+      "By cancelling all of the contracts and starting a new tender"
+    ],
+    "correctIndex": 0,
+    "explanation": "Disputes were settled by negotiation without mediation, arbitration, or court (for example, a supplier repaired a chassis at its own cost and extended the guarantee)."
+  },
+  {
+    "question": "The NEMO Kantara fisheries project was described as \"delivered, but never closed.\" Which problem did the evaluation find?",
+    "options": [
+      "All three visited sites still had working water and energy points",
+      "Key public officials stayed in place and were well informed about it",
+      "A clear exit strategy and consolidation phase was prepared early on",
+      "63 percent of the budget was spent in the last 19 months"
+    ],
+    "correctIndex": 3,
+    "explanation": "Equipment arrived late, leading to a spending rush (63 percent of the budget in the last 19 months), with no exit strategy, officials leaving, and sites no longer working."
+  }
+]

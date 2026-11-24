@@ -1,0 +1,18 @@
+{
+  "name": "super-mario-classroom-quiz",
+  "version": "1.0.0",
+  "description": "Real-time multiplayer classroom quiz web app (Kahoot-style) with a Super Mario retro theme",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-game.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}

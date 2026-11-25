@@ -93,7 +93,8 @@
   // Load Host Info (QR code and URLs)
   async function loadHostInfo() {
     try {
-      const res = await fetch('/api/info');
+      const clientOrigin = window.location.origin;
+      const res = await fetch(`/api/info?clientOrigin=${encodeURIComponent(clientOrigin)}`);
       const data = await res.json();
       lobbyQrCode.src = data.qrDataUrl;
       lobbyUrlDisplay.textContent = data.playerUrl;

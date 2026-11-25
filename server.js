@@ -78,13 +78,55 @@ app.get(['/', '/play'], (req, res) => {
 // App Info API
 app.get('/api/info', async (req, res) => {
   try {
-    const qrDataUrl = await QRCode.toDataURL(playerUrl, {
+    let effectivePlayerUrl = null;
+
+    // 1. Explicit PUBLIC_URL or Render auto-assigned external URL
+    if (process.env.PUBLIC_URL) {
+      effectivePlayerUrl = process.env.PUBLIC_URL;
+    } else if (process.env.RENDER_EXTERNAL_URL) {
+      effectivePlayerUrl = process.env.RENDER_EXTERNAL_URL;
+    }
+
+    // 2. Client query parameter (sent from browser window.location.origin)
+    if (!effectivePlayerUrl && req.query.clientOrigin) {
+      effectivePlayerUrl = req.query.clientOrigin;
+    }
+
+    // 3. Reverse proxy headers (Render, Heroku, ngrok, Cloudflare)
+    if (!effectivePlayerUrl) {
+      const hostHeader = req.get('x-forwarded-host') || req.get('host');
+      const proto = req.get('x-forwarded-proto') || (req.secure ? 'https' : 'http');
+      if (hostHeader) {
+        effectivePlayerUrl = `${proto}://${hostHeader}`;
+      }
+    }
+
+    // 4. If running locally on localhost, use local LAN IP so phones on same Wi-Fi can join
+    if (effectivePlayerUrl && (effectivePlayerUrl.includes('localhost') || effectivePlayerUrl.includes('127.0.0.1'))) {
+      const lan = getLanIp();
+      if (lan && lan !== '127.0.0.1') {
+        effectivePlayerUrl = `http://${lan}:${PORT}`;
+      } else {
+        effectivePlayerUrl = `http://localhost:${PORT}`;
+      }
+    }
+
+    // Fallback
+    if (!effectivePlayerUrl) {
+      effectivePlayerUrl = playerUrl;
+    }
+
+    // Clean any trailing slashes or /host paths
+    effectivePlayerUrl = effectivePlayerUrl.replace(/\/+$/, '').replace(/\/host$/, '');
+
+    const qrDataUrl = await QRCode.toDataURL(effectivePlayerUrl, {
       margin: 1,
       width: 280,
       color: { dark: '#000000', light: '#ffffff' }
     });
+
     res.json({
-      playerUrl,
+      playerUrl: effectivePlayerUrl,
       qrDataUrl,
       questionCount: questions.length,
       questionTime: QUESTION_TIME

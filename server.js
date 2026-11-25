@@ -1,3 +1,7 @@
+console.log('=== STARTING SUPER MARIO QUIZ SERVER ===');
+console.log('Node version:', process.version);
+console.log('Environment PORT:', process.env.PORT);
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -7,8 +11,8 @@ const fs = require('fs');
 const crypto = require('crypto');
 const QRCode = require('qrcode');
 
-// Configuration
-const PORT = parseInt(process.env.PORT, 10) || 3000;
+// Configuration - Render uses process.env.PORT (defaults to 10000 on Render, or 3000 locally)
+const PORT = process.env.PORT || 10000;
 const HOST_PIN = process.env.HOST_PIN || '1234';
 const QUESTION_TIME = parseInt(process.env.QUESTION_TIME, 10) || 60;
 const BASE_POINTS = parseInt(process.env.BASE_POINTS, 10) || 500;
@@ -914,6 +918,10 @@ io.on('connection', (socket) => {
 });
 
 // Start Server
+server.on('error', (err) => {
+  console.error('CRITICAL SERVER LISTEN ERROR:', err);
+});
+
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`=======================================================`);
   console.log(`   🍄 SUPER MARIO QUIZ SERVER RUNNING 🍄`);

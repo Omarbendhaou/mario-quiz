@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Mario Quiz - Chapter 8: Closing Projects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mario-red: #e52521;
+      --mario-blue: #002db3;
+      --mario-sky: #5c94fc;
+      --mario-yellow-top: #ffd233;
+      --mario-yellow-bottom: #f5a623;
+      --mario-coin: #ffd700;
+      --mario-ground: #c8842c;
+      --mario-wood: #7b4419;
+      --color-opt-0: #e52521;
+      --color-opt-1: #0066cc;
+      --color-opt-2: #e5a000;
+      --color-opt-3: #229922;
+      --font-pixel: 'Press Start 2P', monospace, sans-serif;
+      --font-text: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-text);
+      color: #fff;
+      min-height: 100vh;
+      background: #5c94fc;
+      background: linear-gradient(180deg, #3b74e6 0%, #5c94fc 60%, #90b8ff 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Pixel Ground Bar at the bottom */
+    .mario-ground-strip {
+      width: 100%;
+      height: 28px;
+      background: repeating-linear-gradient(90deg, #c8842c, #c8842c 16px, #a36518 16px, #a36518 32px);
+      border-top: 4px solid #000;
+      box-shadow: inset 0 4px 0 #5cd044;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Retro Top HUD */
+    .mario-top-hud {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      border-bottom: 4px solid #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 24px;
+      font-family: var(--font-pixel);
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hud-mario-label {
+      color: var(--mario-red);
+      font-size: 15px;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .hud-score-val {
+      color: #fff;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .hud-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-timer-badge {
+      background: #222;
+      border: 2px solid var(--mario-yellow-top);
+      border-radius: 6px;
+      padding: 4px 12px;
+      color: var(--mario-yellow-top);
+      font-size: 14px;
+    }
+
+    .hud-timer-badge.urgent {
+      background: var(--mario-red);
+      color: #fff;
+      animation: pulse 0.5s infinite alternate;
+    }
+
+    .hud-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-sound-toggle {
+      background: #333;
+      border: 2px solid #fff;
+      border-radius: 6px;
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: 11px;
+      padding: 6px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-sound-toggle:hover {
+      background: #444;
+    }
+
+    /* Main Container */
+    .game-viewport {
+      flex: 1;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Retro Card Styles */
+    .retro-card {
+      background: #000;
+      border: 4px solid #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      padding: 28px 24px;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Start Screen */
+    .start-screen {
+      text-align: center;
+      max-width: 680px;
+    }
+
+    .retro-title {
+      font-family: var(--font-pixel);
+      font-size: 26px;
+      color: var(--mario-coin);
+      text-shadow: 3px 3px 0 var(--mario-red), 5px 5px 0 #000;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .retro-subtitle {
+      font-size: 16px;
+      color: #ddd;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .chapter-badge {
+      display: inline-block;
+      background: var(--mario-red);
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: 2px solid #fff;
+      margin-bottom: 20px;
+    }
+
+    .input-player-name {
+      width: 100%;
+      max-width: 380px;
+      padding: 14px 18px;
+      font-size: 18px;
+      font-family: var(--font-pixel);
+      font-size: 14px;
+      text-align: center;
+      border: 3px solid var(--mario-yellow-top);
+      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      margin-bottom: 24px;
+      outline: none;
+    }
+
+    .input-player-name:focus {
+      border-color: #fff;
+      box-shadow: 0 0 16px var(--mario-coin);
+    }
+
+    /* Mario Yellow Buttons */
+    .mario-yellow-btn {
+      background: linear-gradient(180deg, var(--mario-yellow-top) 0%, var(--mario-yellow-bottom) 100%);
+      color: #000;
+      font-family: var(--font-pixel);
+      font-size: 15px;
+      padding: 16px 36px;
+      border: 3px solid #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #935f00, 0 8px 16px rgba(0, 0, 0, 0.6);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .mario-yellow-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #935f00, 0 12px 20px rgba(0, 0, 0, 0.7);
+    }
+
+    .mario-yellow-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #935f00, 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Question Screen */
+    .question-screen {
+      display: none;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .q-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-family: var(--font-pixel);
+      font-size: 13px;
+      color: var(--mario-yellow-top);
+      border-bottom: 2px dashed #444;
+      padding-bottom: 12px;
+    }
+
+    .question-text-box {
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.45;
+      color: #fff;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    /* 4 Answer Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 680px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border: 3px solid #000;
+      border-radius: 10px;
+      color: #fff;
+      font-family: var(--font-text);
+      font-size: 16px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.5);
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .opt-0 { background: var(--color-opt-0); }
+    .opt-1 { background: var(--color-opt-1); }
+    .opt-2 { background: var(--color-opt-2); }
+    .opt-3 { background: var(--color-opt-3); }
+
+    .opt-icon {
+      font-family: var(--font-pixel);
+      font-size: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .opt-text {
+      flex: 1;
+      line-height: 1.35;
+    }
+
+    /* Correct & Incorrect Styles */
+    .option-btn.correct-choice {
+      border: 4px solid #fff !important;
+      box-shadow: 0 0 20px #22ff22, 0 5px 0 #006600 !important;
+      background: #00aa00 !important;
+      animation: bounceCorrect 0.6s ease;
+    }
+
+    .option-btn.wrong-choice {
+      opacity: 0.4;
+      background: #444 !important;
+      border: 3px solid #666 !important;
+      text-decoration: line-through;
+    }
+
+    .option-btn.dimmed {
+      opacity: 0.35;
+      filter: grayscale(0.5);
+    }
+
+    @keyframes bounceCorrect {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    /* Explanation Card */
+    .explanation-card {
+      display: none;
+      background: #111;
+      border: 3px solid var(--mario-yellow-top);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 14px;
+      text-align: left;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .explanation-title {
+      font-family: var(--font-pixel);
+      font-size: 13px;
+      color: var(--mario-yellow-top);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .explanation-body {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #eee;
+    }
+
+    .q-action-row {
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    /* Victory / Results Screen */
+    .victory-screen {
+      display: none;
+      text-align: center;
+      max-width: 760px;
+    }
+
+    .victory-peach-banner {
+      background: rgba(229, 37, 33, 0.15);
+      border: 3px dashed var(--mario-yellow-top);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+
+    .victory-peach-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--mario-coin);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .results-score-display {
+      font-family: var(--font-pixel);
+      font-size: 32px;
+      color: var(--mario-coin);
+      text-shadow: 3px 3px 0 var(--mario-red), 5px 5px 0 #000;
+      margin: 16px 0;
+    }
+
+    .results-rank-grade {
+      font-family: var(--font-pixel);
+      font-size: 16px;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+
+    .review-table-container {
+      max-height: 260px;
+      overflow-y: auto;
+      text-align: left;
+      background: #111;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 24px;
+    }
+
+    .review-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #222;
+      font-size: 13px;
+    }
+
+    .review-item:last-child {
+      border-bottom: none;
+    }
+
+    .review-q-title {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .review-ans-row {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+    }
+
+    .ans-correct { color: #44dd44; }
+    .ans-wrong { color: #ff5555; }
+
+    /* Canvas Confetti */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Top Retro HUD -->
+  <header class="mario-top-hud">
+    <div class="hud-left">
+      <span class="hud-mario-label">MARIO</span>
+      <span class="hud-score-val" id="hud-score">000000</span>
+    </div>
+    <div class="hud-center">
+      <div class="hud-timer-badge" id="hud-timer-badge">TIME <span id="hud-time-val">60</span></div>
+    </div>
+    <div class="hud-right">
+      <span style="color:var(--mario-coin);">⭐ <span id="hud-q-count">1/8</span></span>
+      <button class="btn-sound-toggle" id="btn-sound" title="Toggle 8-bit sound">
+        <span id="sound-icon">🔊</span> SOUND
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport -->
+  <main class="game-viewport">
+    
+    <!-- 1. START SCREEN -->
+    <section class="retro-card start-screen" id="screen-start">
+      <div class="chapter-badge">CHAPTER 8: CLOSING PROJECTS</div>
+      <h1 class="retro-title">SUPER MARIO QUIZ</h1>
+      <p class="retro-subtitle">Interactive Project Management Presentation Assessment (8 Questions)</p>
+      
+      <div style="margin: 20px 0;">
+        <input type="text" id="player-name-input" class="input-player-name" placeholder="Enter Your Name or Team" value="Mario Champion">
+      </div>
+
+      <button id="btn-start" class="mario-yellow-btn">
+        <span>🎮</span> START QUIZ <span>⏩</span>
+      </button>
+
+      <div style="margin-top:22px; font-size:12px; color:#aaa; font-family:var(--font-pixel); line-height: 1.6;">
+        Press Start to begin • Kahoot-style speed points • Audio enabled
+      </div>
+    </section>
+
+    <!-- 2. QUESTION SCREEN -->
+    <section class="retro-card question-screen" id="screen-question">
+      <div class="q-header-row">
+        <span id="q-stage-label">STAGE 1 / 8</span>
+        <span id="q-points-label">+1,000 PTS</span>
+      </div>
+
+      <div class="question-text-box" id="q-text">
+        Question text loading...
+      </div>
+
+      <div class="options-grid" id="options-grid">
+        <button class="option-btn opt-0" onclick="handleSelectOption(0)" id="opt-btn-0">
+          <span class="opt-icon">▲</span>
+          <span class="opt-text" id="opt-text-0">Option A</span>
+        </button>
+        <button class="option-btn opt-1" onclick="handleSelectOption(1)" id="opt-btn-1">
+          <span class="opt-icon">◆</span>
+          <span class="opt-text" id="opt-text-1">Option B</span>
+        </button>
+        <button class="option-btn opt-2" onclick="handleSelectOption(2)" id="opt-btn-2">
+          <span class="opt-icon">●</span>
+          <span class="opt-text" id="opt-text-2">Option C</span>
+        </button>
+        <button class="option-btn opt-3" onclick="handleSelectOption(3)" id="opt-btn-3">
+          <span class="opt-icon">■</span>
+          <span class="opt-text" id="opt-text-3">Option D</span>
+        </button>
+      </div>
+
+      <!-- Educational Explanation -->
+      <div class="explanation-card" id="explanation-card">
+        <div class="explanation-title">
+          <span>📖</span> <span id="explanation-status-text">EXPLANATION:</span>
+        </div>
+        <p class="explanation-body" id="explanation-text"></p>
+      </div>
+
+      <!-- Next Button Row -->
+      <div class="q-action-row" id="q-action-row">
+        <button id="btn-next-q" class="mario-yellow-btn" onclick="nextQuestion()">
+          NEXT QUESTION ⏩
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. VICTORY & PODIUM SCREEN -->
+    <section class="retro-card victory-screen" id="screen-victory">
+      <div class="victory-peach-banner">
+        <div style="font-size:32px; margin-bottom:8px;">👑 🏰 ⭐</div>
+        <div class="victory-peach-text">"Thank you to our hero for restoring peace to our kingdom!"</div>
+        <div style="font-size:12px; color:#ddd; font-family:var(--font-pixel);">CHAPTER 8 CLOSING PROJECTS COMPLETED</div>
+      </div>
+
+      <h2 style="font-family:var(--font-pixel); font-size:16px; color:#fff;">FINAL SCORE</h2>
+      <div class="results-score-display" id="final-score-val">0 PTS</div>
+      <div class="results-rank-grade" id="final-grade-badge">⭐⭐⭐ SUPER STAR PM!</div>
+
+      <div class="review-table-container" id="review-list"></div>
+
+      <button class="mario-yellow-btn" onclick="restartQuiz()">
+        🔄 PLAY AGAIN
+      </button>
+    </section>
+
+  </main>
+
+  <!-- Retro Strip Bottom -->
+  <div class="mario-ground-strip"></div>
+
+  <!-- SCRIPT -->
+  <script>
+    // 8 Questions & Answers from Chapter 8 PDF
+    const quizData = [
+      {
+        question: "1. In the lessons-learned report, which of the seven questions is described as \"the most important one\"?",
+        options: [
+          "Did we meet our scope, time, and cost goals?",
+          "What is one thing that went right?",
+          "What will we do differently next time?",
+          "What success criteria did we set at the beginning?"
+        ],
+        correctIndex: 2,
+        explanation: "The seventh question, \"What will we do differently next time?\", is the most important because it turns the review into improvements for future projects."
+      },
+      {
+        question: "2. In the Radès–La Goulette bridge case study (Tunis), which result best describes the project?",
+        options: [
+          "It finished on time but cost more than double the plan",
+          "It took about 216 percent of the planned time, with cost close to plan",
+          "It was cancelled before opening because the ferry stayed cheaper",
+          "It met its schedule and budget but carried fewer vehicles than planned"
+        ],
+        correctIndex: 1,
+        explanation: "The schedule grew from 56 to 121 months (216 percent of the plan) while cost stayed at about 102 percent of plan. The bridge still carried more vehicles per day than planned (29,500 vs 24,400)."
+      },
+      {
+        question: "3. According to the presentation, closing procurements involves which three actions?",
+        options: [
+          "Plan the work, select the sellers, and administer the contract",
+          "Audit the seller, litigate the claims, and renegotiate the terms",
+          "Advertise the work, invite bids, and award to the lowest bidder",
+          "Complete deliverables, settle open items, and archive records"
+        ],
+        correctIndex: 3,
+        explanation: "Closing procurements means completing deliverables (delivered, verified, accepted), settling open items and final payment, and archiving contract records for the future."
+      },
+      {
+        question: "4. What was the key takeaway of the Energy Conservation Demonstration Project in Tunisia, which closed in June 1994 instead of June 1990?",
+        options: [
+          "A project must be evaluated, controlled, and transitioned before closing",
+          "Projects should be closed as soon as the loan money has been fully spent",
+          "Loan-funded projects do not need a transition plan once the work is done",
+          "Major scope changes are best approved just before the planned closing date"
+        ],
+        correctIndex: 0,
+        explanation: "Major scope changes were approved only weeks before closure without formal restructuring, and the government inherited maintenance costs. The takeaway: evaluate, control, and transition a project before closing it."
+      },
+      {
+        question: "5. In the negotiated-settlements ladder, which method is the last resort because it involves court action?",
+        options: [
+          "Mediation",
+          "Negotiation",
+          "Litigation",
+          "Arbitration"
+        ],
+        correctIndex: 2,
+        explanation: "The ladder runs from negotiation (preferred), to mediation, to arbitration, to litigation (court action, last resort). Higher steps mean more cost, more time, and more conflict."
+      },
+      {
+        question: "6. Which was one of the lessons from the ONAS treated wastewater project, which took 96 months instead of 60?",
+        options: [
+          "Bundle different activities into one large tender to save time",
+          "Run a market survey before setting cost estimates",
+          "Set low qualification criteria so more bidders can apply",
+          "Skip audit reports so that closing can be done faster"
+        ],
+        correctIndex: 1,
+        explanation: "The lessons were: do not bundle unlike activities in one tender, run a market survey before setting cost estimates, and set qualification criteria that select capable bidders."
+      },
+      {
+        question: "7. How were the equipment disputes settled in the Phosphate Sector Rehabilitation project (CPG and GCT, Gafsa)?",
+        options: [
+          "By direct negotiation between the buyer and the suppliers",
+          "By binding arbitration run by a neutral outside arbitrator",
+          "By court action brought against each of the suppliers",
+          "By cancelling all of the contracts and starting a new tender"
+        ],
+        correctIndex: 0,
+        explanation: "Disputes were settled by negotiation without mediation, arbitration, or court (for example, a supplier repaired a chassis at its own cost and extended the guarantee)."
+      },
+      {
+        question: "8. The NEMO Kantara fisheries project was described as \"delivered, but never closed.\" Which problem did the evaluation find?",
+        options: [
+          "All three visited sites still had working water and energy points",
+          "Key public officials stayed in place and were well informed about it",
+          "A clear exit strategy and consolidation phase was prepared early on",
+          "63 percent of the budget was spent in the last 19 months"
+        ],
+        correctIndex: 3,
+        explanation: "Equipment arrived late, leading to a spending rush (63 percent of the budget in the last 19 months), with no exit strategy, officials leaving, and sites no longer working."
+      }
+    ];
+
+    // Web Audio Synthesizer (Zero external audio files needed)
+    class RetroAudio {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playCoin() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(987.77, t); // B5
+          osc.frequency.setValueAtTime(1318.51, t + 0.08); // E6
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.35);
+        } catch(e) {}
+      }
+      playCorrect() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const t = this.ctx.currentTime + idx * 0.07;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, t);
+            gain.gain.setValueAtTime(0.18, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(t);
+            osc.stop(t + 0.2);
+          });
+        } catch(e) {}
+      }
+      playWrong() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, t);
+          osc.frequency.linearRampToValueAtTime(110, t + 0.35);
+          gain.gain.setValueAtTime(0.15, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.35);
+        } catch(e) {}
+      }
+      playFanfare() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const melody = [
+            { f: 523.25, d: 0.12 }, { f: 659.25, d: 0.12 }, { f: 783.99, d: 0.12 },
+            { f: 1046.50, d: 0.3 }, { f: 880.00, d: 0.15 }, { f: 1046.50, d: 0.5 }
+          ];
+          let curTime = this.ctx.currentTime;
+          melody.forEach(n => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(n.f, curTime);
+            gain.gain.setValueAtTime(0.12, curTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, curTime + n.d);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(curTime);
+            osc.stop(curTime + n.d);
+            curTime += n.d * 0.9;
+          });
+        } catch(e) {}
+      }
+    }
+
+    // State Variables
+    const audio = new RetroAudio();
+    let currentQIndex = 0;
+    let score = 0;
+    let timeRemaining = 60;
+    let timerInterval = null;
+    let answeredCurrent = false;
+    let resultsLog = [];
+
+    // DOM Elements
+    const screenStart = document.getElementById('screen-start');
+    const screenQuestion = document.getElementById('screen-question');
+    const screenVictory = document.getElementById('screen-victory');
+    const btnStart = document.getElementById('btn-start');
+    const btnSound = document.getElementById('btn-sound');
+    const soundIcon = document.getElementById('sound-icon');
+    const hudScore = document.getElementById('hud-score');
+    const hudTimeVal = document.getElementById('hud-time-val');
+    const hudTimerBadge = document.getElementById('hud-timer-badge');
+    const hudQCount = document.getElementById('hud-q-count');
+
+    const qStageLabel = document.getElementById('q-stage-label');
+    const qPointsLabel = document.getElementById('q-points-label');
+    const qText = document.getElementById('q-text');
+    const explanationCard = document.getElementById('explanation-card');
+    const explanationStatusText = document.getElementById('explanation-status-text');
+    const explanationText = document.getElementById('explanation-text');
+    const qActionRow = document.getElementById('q-action-row');
+    const btnNextQ = document.getElementById('btn-next-q');
+
+    // Mute toggle
+    btnSound.addEventListener('click', () => {
+      audio.init();
+      audio.muted = !audio.muted;
+      soundIcon.textContent = audio.muted ? '🔇' : '🔊';
+    });
+
+    // Start Quiz
+    btnStart.addEventListener('click', () => {
+      audio.init();
+      audio.playCoin();
+      screenStart.style.display = 'none';
+      screenQuestion.style.display = 'block';
+      currentQIndex = 0;
+      score = 0;
+      resultsLog = [];
+      loadQuestion(0);
+    });
+
+    function loadQuestion(index) {
+      answeredCurrent = false;
+      const q = quizData[index];
+      qStageLabel.textContent = `STAGE ${index + 1} / ${quizData.length}`;
+      hudQCount.textContent = `${index + 1}/${quizData.length}`;
+      qText.textContent = q.question;
+      explanationCard.style.display = 'none';
+      qActionRow.style.display = 'none';
+
+      // Reset options
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`opt-btn-${i}`);
+        const text = document.getElementById(`opt-text-${i}`);
+        text.textContent = q.options[i];
+        btn.disabled = false;
+        btn.className = `option-btn opt-${i}`;
+      }
+
+      // Start 60s timer
+      timeRemaining = 60;
+      hudTimeVal.textContent = timeRemaining;
+      hudTimerBadge.classList.remove('urgent');
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        hudTimeVal.textContent = timeRemaining;
+        qPointsLabel.textContent = `+${Math.max(500, Math.round(500 + 500 * (timeRemaining / 60)))} PTS`;
+
+        if (timeRemaining <= 10) {
+          hudTimerBadge.classList.add('urgent');
+        }
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          if (!answeredCurrent) {
+            handleTimeUp();
+          }
+        }
+      }, 1000);
+    }
+
+    function handleSelectOption(selectedIndex) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+      clearInterval(timerInterval);
+
+      const q = quizData[currentQIndex];
+      const isCorrect = (selectedIndex === q.correctIndex);
+
+      // Disable buttons
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`opt-btn-${i}`);
+        btn.disabled = true;
+        if (i === q.correctIndex) {
+          btn.classList.add('correct-choice');
+        } else if (i === selectedIndex) {
+          btn.classList.add('wrong-choice');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      }
+
+      let pointsEarned = 0;
+      if (isCorrect) {
+        audio.playCorrect();
+        // Speed bonus points
+        pointsEarned = Math.round(500 + 500 * (Math.max(0, timeRemaining) / 60));
+        score += pointsEarned;
+        hudScore.textContent = score.toString().padStart(6, '0');
+        explanationStatusText.textContent = `⭐ CORRECT! (+${pointsEarned} PTS)`;
+        explanationStatusText.style.color = '#44dd44';
+      } else {
+        audio.playWrong();
+        explanationStatusText.textContent = `❌ INCORRECT (0 PTS)`;
+        explanationStatusText.style.color = '#ff5555';
+      }
+
+      resultsLog.push({
+        qIndex: currentQIndex,
+        question: q.question,
+        chosen: q.options[selectedIndex],
+        correct: q.options[q.correctIndex],
+        isCorrect: isCorrect,
+        points: pointsEarned
+      });
+
+      // Show explanation
+      explanationText.textContent = q.explanation;
+      explanationCard.style.display = 'block';
+
+      // Show Next button
+      btnNextQ.textContent = (currentQIndex === quizData.length - 1) ? "VIEW FINAL RESULTS 👑" : "NEXT QUESTION ⏩";
+      qActionRow.style.display = 'block';
+    }
+
+    function handleTimeUp() {
+      answeredCurrent = true;
+      audio.playWrong();
+      const q = quizData[currentQIndex];
+
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`opt-btn-${i}`);
+        btn.disabled = true;
+        if (i === q.correctIndex) {
+          btn.classList.add('correct-choice');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      }
+
+      resultsLog.push({
+        qIndex: currentQIndex,
+        question: q.question,
+        chosen: "TIME EXPIRED",
+        correct: q.options[q.correctIndex],
+        isCorrect: false,
+        points: 0
+      });
+
+      explanationStatusText.textContent = `⏰ TIME UP! (0 PTS)`;
+      explanationStatusText.style.color = '#ffaa00';
+      explanationText.textContent = q.explanation;
+      explanationCard.style.display = 'block';
+      btnNextQ.textContent = (currentQIndex === quizData.length - 1) ? "VIEW FINAL RESULTS 👑" : "NEXT QUESTION ⏩";
+      qActionRow.style.display = 'block';
+    }
+
+    function nextQuestion() {
+      audio.playCoin();
+      currentQIndex++;
+      if (currentQIndex < quizData.length) {
+        loadQuestion(currentQIndex);
+      } else {
+        showVictoryScreen();
+      }
+    }
+
+    function showVictoryScreen() {
+      clearInterval(timerInterval);
+      audio.playFanfare();
+      startConfetti(6000);
+
+      screenQuestion.style.display = 'none';
+      screenVictory.style.display = 'block';
+
+      const finalScoreVal = document.getElementById('final-score-val');
+      finalScoreVal.textContent = `${score.toLocaleString()} PTS`;
+
+      const finalGradeBadge = document.getElementById('final-grade-badge');
+      const correctCount = resultsLog.filter(r => r.isCorrect).length;
+
+      if (correctCount === 8) {
+        finalGradeBadge.textContent = "⭐⭐⭐ 100% PERFECT! SUPER MARIO PM MASTER!";
+      } else if (correctCount >= 6) {
+        finalGradeBadge.textContent = "⭐⭐ EXCELLENT WORK! SENIOR PM STATUS!";
+      } else if (correctCount >= 4) {
+        finalGradeBadge.textContent = "⭐ GOOD EFFORT! CHAPTER 8 CERTIFIED!";
+      } else {
+        finalGradeBadge.textContent = "🌱 PRACTICE MAKES PERFECT!";
+      }
+
+      // Render Review List
+      const reviewList = document.getElementById('review-list');
+      reviewList.innerHTML = '';
+      resultsLog.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'review-item';
+        div.innerHTML = `
+          <div class="review-q-title">Q${idx + 1}: ${item.question.split('. ')[1] || item.question}</div>
+          <div class="review-ans-row">
+            <span class="${item.isCorrect ? 'ans-correct' : 'ans-wrong'}">
+              ${item.isCorrect ? '✓ Correct' : '✗ Selected: ' + item.chosen} (+${item.points} pts)
+            </span>
+            ${!item.isCorrect ? `<span class="ans-correct">• Answer: ${item.correct}</span>` : ''}
+          </div>
+        `;
+        reviewList.appendChild(div);
+      });
+    }
+
+    function restartQuiz() {
+      audio.playCoin();
+      screenVictory.style.display = 'none';
+      screenStart.style.display = 'block';
+      hudScore.textContent = '000000';
+    }
+
+    // Lightweight Canvas Confetti
+    function startConfetti(duration = 5000) {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ['#e52521', '#ffd233', '#002db3', '#229922', '#ffffff'];
+      const particles = [];
+      for (let i = 0; i < 120; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * -canvas.height,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 3,
+          vy: Math.random() * 4 + 2,
+          rot: Math.random() * 360
+        });
+      }
+
+      const startTime = performance.now();
+      function render(now) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+
+        if (now - startTime < duration) {
+          requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      requestAnimationFrame(render);
+    }
+  </script>
+</body>
+</html>
